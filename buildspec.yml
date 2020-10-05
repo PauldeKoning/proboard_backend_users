@@ -1,0 +1,16 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 312978926072.dkr.ecr.us-east-1.amazonaws.com
+  build:
+    commands:
+      - gradle build
+      - gradle test
+      - gradle sonarqube
+      - docker build -t proboard_backend_users .
+      - docker tag proboard_backend_users:latest 312978926072.dkr.ecr.us-east-1.amazonaws.com/proboard_backend_users:latest
+  post_build:
+    commands:
+      - docker push 312978926072.dkr.ecr.us-east-1.amazonaws.com/proboard_backend_users:latest
